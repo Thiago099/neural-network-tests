@@ -1,0 +1,40 @@
+import * as tf from '@tensorflow/tfjs';
+
+async function main() {
+  // Create an input tensor with shape 1x3
+const input = tf.tensor([[1, 2, 3]]);
+
+// Create a simple autoencoder model with a single fully-connected layer
+const model = tf.sequential();
+model.add(tf.layers.dense({
+  inputShape: [3],
+  units:3,
+  useBias: true,
+  // kernelInitializer: 'ones',
+  // biasInitializer: 'ones'
+}));
+
+// Compile the model
+model.compile({
+  optimizer: 'adam',
+  loss: 'meanSquaredError'
+});
+
+// Train the model using the input tensor
+await model.fit(input, input, {
+  epochs: 100,
+});
+
+// Use the model to encode the input
+const encoded = model.predict(input);
+
+// // Use the model to decode the encoded input
+const decoded = model.predict(encoded);
+
+// // Print the original and decoded values
+console.log(`Original: ${input.dataSync()}`);
+console.log(`Encoded: ${encoded.dataSync()}`);
+console.log(`Decoded: ${decoded.dataSync()}`);
+
+}
+main();
