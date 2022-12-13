@@ -1,0 +1,91 @@
+function feedforward(inputs, weights) {
+  // Initialize the outputs with the input values
+  let outputs = inputs;
+
+  // Loop through the weights and compute the outputs of each layer
+  for (let i = 0; i < weights.length; i++) {
+    console.log(weights[i]);
+    outputs = matrixMultiply(outputs, weights[i]);
+  }
+
+
+  return outputs;
+}
+
+function matrixMultiply(A, B) {
+  // console.log(A, B);
+  let result = [];
+  for (let i = 0; i < A.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < B[0].length; j++) {
+      result[i][j] = 0;
+      for (let k = 0; k < B.length; k++) {
+        result[i][j] += A[i][k] * B[k][j];
+      }
+    }
+  }
+  return result;
+}
+
+function sgd(inputs, targets, weights, learningRate) {
+
+  // Compute the output of the network
+  let outputs = feedforward(inputs, weights);
+
+  // Compute the error between the outputs and the targets
+  let errors = matrixSubtract(targets, outputs);
+
+
+  // Update the weights using the gradient descent rule
+  let gradient = matrixMultiply(errors, inputs);
+  let weightUpdates = matrixMultiply(gradient, learningRate);
+
+  return matrixAdd(weights, weightUpdates);
+}
+
+// Helper function to perform matrix addition
+function matrixAdd(A, B) {
+  let result = [];
+  for (let i = 0; i < A.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < A[0].length; j++) {
+      result[i][j] = A[i][j] + B[i][j];
+    }
+  }
+  return result;
+}
+
+// Helper function to perform matrix subtraction
+function matrixSubtract(A, B) {
+  let result = [];
+  for (let i = 0; i < A.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < A[0].length; j++) {
+      result[i][j] = A[i][j] - B[i][j];
+    }
+  }
+  return result;
+}
+
+
+function initializeWeights(input, output)
+{
+  return Array(input[0].length).fill().map(() => Array(output[0].length).fill().map(() => Math.random()));
+}
+
+let lr = 0.1;
+let inputs = [[1, 2], [2, 1]];
+let outputs = [[1, 1], [1, 2]];
+
+let weights = initializeWeights(inputs, outputs);
+for (let i = 0; i < 1000; i++) {
+  for(const input of inputs)
+  {
+    weights = sgd(input, outputs, weights, lr);
+  }
+}
+
+
+
+new element(document.body)
+.html(feedforward(inputs,weights))

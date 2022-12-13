@@ -1,45 +1,32 @@
+import * as tf from '@tensorflow/tfjs';
 
-// Initialize weights and bias
-let weights = [1, 1, 1];
-let bias = 0;
+// Define a model for addition
+const model = tf.sequential();
+model.add(tf.layers.dense({units: 1, inputShape: [2]}));
 
-// Initialize learning rate
-let lr = 0.1;
+// Compile the model
+model.compile({loss: 'meanSquaredError', optimizer: 'sgd'});
 
-// Define input and output data
-let inputs = [[1, 2], [2, 1]];
-let outputs = [1, 2];
+// Generate some synthetic data for training
+const xs = tf.tensor2d([[1, 1], [2, 2], [3, 3], [4, 4]], [4, 2]);
+const ys = tf.tensor2d([2, 4, 6, 8], [4, 1]);
 
-// Perform SGD for a number of epochs
-for (let epoch = 0; epoch < 100; epoch++) {
-    // Loop over all examples
-    for (let i = 0; i < inputs.length; i++) {
-        // Calculate the predicted output
-        let prediction = bias;
-        for (let j = 0; j < inputs[i].length; j++) {
-            prediction += inputs[i][j] * weights[j];
-        }
-
-        // Calculate the error
-        let error = outputs[i] - prediction;
-
-        // Update the bias
-        bias += lr * error;
-
-        // Update the weights
-        for (let j = 0; j < weights.length; j++) {
-            weights[j] += lr * error * inputs[i][j];
-        }
+// Train the model using the data
+model.fit(xs, ys, {
+  epochs: 10,
+  callbacks: {
+    onEpochEnd: (epoch, log) => {
+      new element("div")
+      .parent(document.body)
+      .html(`Epoch ${epoch+1}: loss = ${log.loss}`)
     }
-}
-
-
-// predict the output for a new input
-let newInput = [1, 2];
-let prediction = bias;
-for (let i = 0; i < newInput.length; i++) {
-    prediction += newInput[i] * weights[i];
-}
-
-new element(document.body)
-.html(Math.round(prediction))
+  }
+})
+.then(() => {
+  // Use the model to do inference on a new data point
+  var prediction = model.predict(tf.tensor2d([[3, 2]], [1, 2]))
+  
+    new element('div')
+    .parent(document.body)
+    .html(prediction.dataSync())
+});
